@@ -6,10 +6,15 @@ namespace myTiles {
     export const tile1 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
     export const tile2 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile3 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile4 = image.ofBuffer(hex``);
 
-    helpers.registerTilemapFactory(function(name: string) {
+    helpers._registerFactory("tilemap", function(name: string) {
         switch(helpers.stringTrim(name)) {
-            case "level": return tiles.createTilemap(hex`13000f00010101010101010101010101010101010101010103030202020202020202020202020202020101030102010201020102010201020102010201010202020202020202020202020202020202010102010201020102010201020102010201020101020202020202020202020202020202020201010201020102010201020102010201020102010102020202020202020202020202020202020101020102010201020102010201020102010201010202020202020202020202020202020202010102010201020102010201020102010201020101020202020202020202020202020202020201010201020102010201020102010201020102010102020202020202020202020202020202020101010101010101010101010101010101010101`, img`
+            case "level":
+            case "level":return tiles.createTilemap(hex`13000f00030303030303030303030303030303030303030302020101010101010101010101010101010303020301030103010301030103010301030103030101010101010101010101010101010101030301030103010301030103010301030103010303010101010101010101010101010101010103030103010301030103010301030103010301030301010101010101010101010101010101010303010301030103010301030103010301030103030101010101010101010101010101010101030301030103010301030103010301030103010303010101010101010101010101010101010103030103010301030103010301030103010301030301010101010101010101010101010101010303030303030303030303030303030303030303`, img`
 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
 2 . . . . . . . . . . . . . . . . . 2 
 2 . 2 . 2 . 2 . 2 . 2 . 2 . 2 . 2 . 2 
@@ -25,7 +30,20 @@ namespace myTiles {
 2 . 2 . 2 . 2 . 2 . 2 . 2 . 2 . 2 . 2 
 2 . . . . . . . . . . . . . . . . . 2 
 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-`, [myTiles.transparency16,sprites.dungeon.floorLight2,myTiles.tile1,myTiles.tile2], TileScale.Sixteen)
+`, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile4], TileScale.Sixteen);
+        }
+        return null;
+    })
+
+    helpers._registerFactory("tile", function(name: string) {
+        switch(helpers.stringTrim(name)) {
+            case "transparency16":return transparency16;
+            case "tile1":return tile1;
+            case "tile2":return tile2;
+            case "brickWall":
+            case "tile3":return tile3;
+            case "solidWall":
+            case "tile4":return tile4;
         }
         return null;
     })

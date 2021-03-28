@@ -68,10 +68,10 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Explosion, function (sprite, oth
     game.over(false)
 })
 function bombExplodeTop (sprite: Sprite, depth: number) {
-    if (sprite.tileKindAt(TileDirection.Top, sprites.builtin.brick)) {
-        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Top), myTiles.tile1)
+    if (sprite.tileKindAt(TileDirection.Top, assets.tile`brickWall`)) {
+        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Top), assets.tile`tile1`)
         tiles.setWallAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Top), false)
-        if (Math.percentChance(100 / (tiles.getTilesByType(sprites.builtin.brick).length + 1))) {
+        if (Math.percentChance(100 / (tiles.getTilesByType(assets.tile`brickWall`).length + 1))) {
             doorFound = true
             doorSprite = sprites.create(img`
                 7 7 7 7 7 9 9 8 9 1 1 7 7 7 7 7 
@@ -117,7 +117,7 @@ function bombExplodeTop (sprite: Sprite, depth: number) {
             }
         }
     } else {
-        if (!(sprite.tileKindAt(TileDirection.Top, sprites.dungeon.floorLight2))) {
+        if (!(sprite.tileKindAt(TileDirection.Top, assets.tile`solidWall`))) {
             if (depth == 1) {
                 explosionSprite = sprites.create(img`
                     . . . . . 5 5 5 5 5 5 . . . . . 
@@ -172,10 +172,10 @@ sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSp
 })
 // handling left side explosion
 function bombExplodeLeft (sprite: Sprite, depth: number) {
-    if (sprite.tileKindAt(TileDirection.Left, sprites.builtin.brick)) {
-        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Left), myTiles.tile1)
+    if (sprite.tileKindAt(TileDirection.Left, assets.tile`brickWall`)) {
+        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Left), assets.tile`tile1`)
         tiles.setWallAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Left), false)
-        if (Math.percentChance(100 / (tiles.getTilesByType(sprites.builtin.brick).length + 1))) {
+        if (Math.percentChance(100 / (tiles.getTilesByType(assets.tile`brickWall`).length + 1))) {
             doorFound = true
             doorSprite = sprites.create(img`
                 7 7 7 7 f 9 9 8 9 1 1 f 7 7 7 7 
@@ -221,7 +221,7 @@ function bombExplodeLeft (sprite: Sprite, depth: number) {
             }
         }
     } else {
-        if (!(sprite.tileKindAt(TileDirection.Left, sprites.dungeon.floorLight2))) {
+        if (!(sprite.tileKindAt(TileDirection.Left, assets.tile`solidWall`))) {
             if (depth == 1) {
                 explosionSprite = sprites.create(img`
                     . . . . . . . . . . . . . . . . 
@@ -276,11 +276,11 @@ sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Explosion, function (sprite, othe
 })
 // handling left side explosion
 function bombExplodeRight (sprite: Sprite, depth: number) {
-    if (sprite.tileKindAt(TileDirection.Right, sprites.builtin.brick)) {
-        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Right), myTiles.tile1)
+    if (sprite.tileKindAt(TileDirection.Right, assets.tile`brickWall`)) {
+        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Right), assets.tile`tile1`)
         tiles.setWallAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Right), false)
         if (!(doorFound)) {
-            if (Math.percentChance(100 / (tiles.getTilesByType(sprites.builtin.brick).length + 1))) {
+            if (Math.percentChance(100 / (tiles.getTilesByType(assets.tile`brickWall`).length + 1))) {
                 doorFound = true
                 doorSprite = sprites.create(img`
                     7 7 7 7 7 9 9 8 9 1 1 7 7 7 7 7 
@@ -327,7 +327,7 @@ function bombExplodeRight (sprite: Sprite, depth: number) {
             }
         }
     } else {
-        if (!(sprite.tileKindAt(TileDirection.Right, sprites.dungeon.floorLight2))) {
+        if (!(sprite.tileKindAt(TileDirection.Right, assets.tile`solidWall`))) {
             if (depth == 1) {
                 explosionSprite = sprites.create(img`
                     . . . . . . . . . . . . . . . . 
@@ -379,11 +379,11 @@ function bombExplodeRight (sprite: Sprite, depth: number) {
 }
 // handling left side explosion
 function bombExplodeBottom (sprite: Sprite, depth: number) {
-    if (sprite.tileKindAt(TileDirection.Bottom, sprites.builtin.brick)) {
-        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Bottom), myTiles.tile1)
+    if (sprite.tileKindAt(TileDirection.Bottom, assets.tile`brickWall`)) {
+        tiles.setTileAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Bottom), assets.tile`tile1`)
         tiles.setWallAt(tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Bottom), false)
         if (!(doorFound)) {
-            if (Math.percentChance(100 / (tiles.getTilesByType(sprites.builtin.brick).length + 1))) {
+            if (Math.percentChance(100 / (tiles.getTilesByType(assets.tile`brickWall`).length + 1))) {
                 doorFound = true
                 doorSprite = sprites.create(img`
                     7 7 7 7 7 9 9 8 9 1 1 7 7 7 7 7 
@@ -430,7 +430,7 @@ function bombExplodeBottom (sprite: Sprite, depth: number) {
             }
         }
     } else {
-        if (!(sprite.tileKindAt(TileDirection.Bottom, sprites.dungeon.floorLight2))) {
+        if (!(sprite.tileKindAt(TileDirection.Bottom, assets.tile`solidWall`))) {
             if (depth == 1) {
                 explosionSprite = sprites.create(img`
                     . . 5 2 3 3 1 1 1 1 3 3 2 5 . . 
@@ -514,40 +514,15 @@ bombermanSprite.z = 10
 tiles.placeOnTile(bombermanSprite, tiles.getTileLocation(1, 1))
 bmhelper.moveSprite(bombermanSprite, 100, 100)
 scene.cameraFollowSprite(bombermanSprite)
-for (let value of tiles.getTilesByType(myTiles.tile1)) {
+for (let value of tiles.getTilesByType(assets.tile`tile1`)) {
     if (Math.percentChance(30)) {
-        tiles.setTileAt(value, sprites.builtin.brick)
+        tiles.setTileAt(value, assets.tile`brickWall`)
         tiles.setWallAt(value, true)
     }
 }
 for (let index = 0; index < 4; index++) {
-    enemySprite = sprites.create(img`
-        ........................
-        ........................
-        ........................
-        ........................
-        ..........ffff..........
-        ........ff1111ff........
-        .......fb111111bf.......
-        .......f11111111f.......
-        ......fd11111111df......
-        ......fd11111111df......
-        ......fddd1111dddf......
-        ......fbdbfddfbdbf......
-        ......fcdcf11fcdcf......
-        .......fb111111bf.......
-        ......fffcdb1bdffff.....
-        ....fc111cbfbfc111cf....
-        ....f1b1b1ffff1b1b1f....
-        ....fbfbffffffbfbfbf....
-        .........ffffff.........
-        ...........fff..........
-        ........................
-        ........................
-        ........................
-        ........................
-        `, SpriteKind.Enemy)
+    enemySprite = sprites.create(assets.image`organeEnemy`, SpriteKind.Enemy)
     enemySprite.z = 9
-    tiles.placeOnRandomTile(enemySprite, myTiles.tile1)
+    tiles.placeOnRandomTile(enemySprite, assets.tile`tile1`)
     bmhelper.randomlyMoveSprite(enemySprite, 50)
 }
