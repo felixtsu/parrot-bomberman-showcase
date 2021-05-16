@@ -3,30 +3,42 @@ namespace SpriteKind {
     export const Explosion = SpriteKind.create()
     export const Door = SpriteKind.create()
     export const ExplosionRangeUp = SpriteKind.create()
+    export const ExplosionControl = SpriteKind.create()
+    export const MoreBombs = SpriteKind.create()
 }
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (explosionUnderControl) {
+        for (let value of sprites.allOfKind(SpriteKind.Bomb)) {
+            value.destroy()
+        }
+    }
+})
 function placeBomb () {
-    bombSprite = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . 2 . . . . 
-        . . . . . . . . . . 5 . . . . . 
-        . . . . . . . . . . e . . . . . 
-        . . . . . 1 1 f f e f . . . . . 
-        . . . . 1 c c f f e f f . . . . 
-        . . . 1 c c f f f f f f f . . . 
-        . . . 1 c f f f f f f f f . . . 
-        . . . 1 f f f f f f f f f . . . 
-        . . . f f f f f f f f f f . . . 
-        . . . f f f f f f f f f f . . . 
-        . . . f f f f f f f c f f . . . 
-        . . . . f f f f f c f f . . . . 
-        . . . c c f f f f f f c c . . . 
-        . . . . c c c c c c c c . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Bomb)
-    sprites.setDataNumber(bombSprite, "explosionRange", explosionRange)
-    bombSprite.lifespan = 3000
-    tiles.placeOnTile(bombSprite, tiles.locationOfSprite(bombermanSprite))
-    tiles.setWallAt(tiles.locationOfSprite(bombSprite), true)
+    if (bombNumbers > 0) {
+        bombSprite = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . 2 . . . . 
+            . . . . . . . . . . 5 . . . . . 
+            . . . . . . . . . . e . . . . . 
+            . . . . . 1 1 f f e f . . . . . 
+            . . . . 1 c c f f e f f . . . . 
+            . . . 1 c c f f f f f f f . . . 
+            . . . 1 c f f f f f f f f . . . 
+            . . . 1 f f f f f f f f f . . . 
+            . . . f f f f f f f f f f . . . 
+            . . . f f f f f f f f f f . . . 
+            . . . f f f f f f f c f f . . . 
+            . . . . f f f f f c f f . . . . 
+            . . . c c f f f f f f c c . . . 
+            . . . . c c c c c c c c . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Bomb)
+        sprites.setDataNumber(bombSprite, "explosionRange", explosionRange)
+        bombSprite.lifespan = 3000
+        tiles.placeOnTile(bombSprite, tiles.locationOfSprite(bombermanSprite))
+        tiles.setWallAt(tiles.locationOfSprite(bombSprite), true)
+        bombNumbers += -1
+    }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.ExplosionRangeUp, function (sprite, otherSprite) {
     otherSprite.destroy(effects.ashes, 500)
@@ -63,6 +75,7 @@ sprites.onDestroyed(SpriteKind.Bomb, function (sprite) {
     bombExplodeTop(sprite, sprites.readDataNumber(sprite, "explosionRange"))
     bombExplodeRight(sprite, sprites.readDataNumber(sprite, "explosionRange"))
     bombExplodeBottom(sprite, sprites.readDataNumber(sprite, "explosionRange"))
+    bombNumbers += 1
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Explosion, function (sprite, otherSprite) {
     game.over(false)
@@ -94,7 +107,7 @@ function bombExplodeTop (sprite: Sprite, depth: number) {
             tiles.placeOnTile(doorSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Top))
         }
         if (explosionRange < 5) {
-            if (Math.percentChance(50)) {
+            if (Math.percentChance(30)) {
                 explosionRangeUpSprite = sprites.create(img`
                     . . . . . . . . . . . . . . . . 
                     . a d d d d d d d d d d d d a . 
@@ -114,6 +127,50 @@ function bombExplodeTop (sprite: Sprite, depth: number) {
                     . . . . . . . . . . . . . . . . 
                     `, SpriteKind.ExplosionRangeUp)
                 tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Top))
+            } else {
+                if (Math.percentChance(30) && !(explosionUnderControl)) {
+                    explosionRangeUpSprite = sprites.create(img`
+                        . . . . . . . . . . . . . . . . 
+                        . a d d d d d d d d d d d d a . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a b d d d d d d d a a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d d d d d c a d . 
+                        . d a a a c c c c c c c c a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . a d d d d d d d d d d d d a . 
+                        . . . . . . . . . . . . . . . . 
+                        `, SpriteKind.ExplosionControl)
+                    tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Top))
+                } else {
+                    if (Math.percentChance(30)) {
+                        explosionRangeUpSprite = sprites.create(img`
+                            . . . . . . . . . . . . . . . . 
+                            . a d d d d d d d d d d d d a . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a 5 a a a a d . 
+                            . d a a a a f f 2 a a a a a d . 
+                            . d a a a f f 2 f f a a a a d . 
+                            . d a a f f f 2 1 f f a a a d . 
+                            . d a a f f f e f 1 f c a a d . 
+                            . d a a f d f f f f f c a a d . 
+                            . d a a a f d f f f c c a a d . 
+                            . d a a a a f f f c c a a a d . 
+                            . d a a a a a c c c a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . a d d d d d d d d d d d d a . 
+                            . . . . . . . . . . . . . . . . 
+                            `, SpriteKind.MoreBombs)
+                        tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Top))
+                    }
+                }
             }
         }
     } else {
@@ -198,7 +255,7 @@ function bombExplodeLeft (sprite: Sprite, depth: number) {
             tiles.placeOnTile(doorSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Left))
         }
         if (explosionRange < 5) {
-            if (Math.percentChance(50)) {
+            if (Math.percentChance(30)) {
                 explosionRangeUpSprite = sprites.create(img`
                     . . . . . . . . . . . . . . . . 
                     . a d d d d d d d d d d d d a . 
@@ -218,6 +275,50 @@ function bombExplodeLeft (sprite: Sprite, depth: number) {
                     . . . . . . . . . . . . . . . . 
                     `, SpriteKind.ExplosionRangeUp)
                 tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Left))
+            } else {
+                if (Math.percentChance(30) && !(explosionUnderControl)) {
+                    explosionRangeUpSprite = sprites.create(img`
+                        . . . . . . . . . . . . . . . . 
+                        . a d d d d d d d d d d d d a . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a b d d d d d d d a a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d d d d d c a d . 
+                        . d a a a c c c c c c c c a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . a d d d d d d d d d d d d a . 
+                        . . . . . . . . . . . . . . . . 
+                        `, SpriteKind.ExplosionControl)
+                    tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Left))
+                } else {
+                    if (Math.percentChance(30)) {
+                        explosionRangeUpSprite = sprites.create(img`
+                            . . . . . . . . . . . . . . . . 
+                            . a d d d d d d d d d d d d a . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a 5 a a a a d . 
+                            . d a a a a f f 2 a a a a a d . 
+                            . d a a a f f 2 f f a a a a d . 
+                            . d a a f f f 2 1 f f a a a d . 
+                            . d a a f f f e f 1 f c a a d . 
+                            . d a a f d f f f f f c a a d . 
+                            . d a a a f d f f f c c a a d . 
+                            . d a a a a f f f c c a a a d . 
+                            . d a a a a a c c c a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . a d d d d d d d d d d d d a . 
+                            . . . . . . . . . . . . . . . . 
+                            `, SpriteKind.MoreBombs)
+                        tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Left))
+                    }
+                }
             }
         }
     } else {
@@ -304,7 +405,7 @@ function bombExplodeRight (sprite: Sprite, depth: number) {
             }
         }
         if (explosionRange < 5) {
-            if (Math.percentChance(50)) {
+            if (Math.percentChance(30)) {
                 explosionRangeUpSprite = sprites.create(img`
                     . . . . . . . . . . . . . . . . 
                     . a d d d d d d d d d d d d a . 
@@ -324,6 +425,50 @@ function bombExplodeRight (sprite: Sprite, depth: number) {
                     . . . . . . . . . . . . . . . . 
                     `, SpriteKind.ExplosionRangeUp)
                 tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Right))
+            } else {
+                if (Math.percentChance(30) && !(explosionUnderControl)) {
+                    explosionRangeUpSprite = sprites.create(img`
+                        . . . . . . . . . . . . . . . . 
+                        . a d d d d d d d d d d d d a . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a b d d d d d d d a a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d d d d d c a d . 
+                        . d a a a c c c c c c c c a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . a d d d d d d d d d d d d a . 
+                        . . . . . . . . . . . . . . . . 
+                        `, SpriteKind.ExplosionControl)
+                    tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Right))
+                } else {
+                    if (Math.percentChance(30)) {
+                        explosionRangeUpSprite = sprites.create(img`
+                            . . . . . . . . . . . . . . . . 
+                            . a d d d d d d d d d d d d a . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a 5 a a a a d . 
+                            . d a a a a f f 2 a a a a a d . 
+                            . d a a a f f 2 f f a a a a d . 
+                            . d a a f f f 2 1 f f a a a d . 
+                            . d a a f f f e f 1 f c a a d . 
+                            . d a a f d f f f f f c a a d . 
+                            . d a a a f d f f f c c a a d . 
+                            . d a a a a f f f c c a a a d . 
+                            . d a a a a a c c c a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . a d d d d d d d d d d d d a . 
+                            . . . . . . . . . . . . . . . . 
+                            `, SpriteKind.MoreBombs)
+                        tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Right))
+                    }
+                }
             }
         }
     } else {
@@ -377,6 +522,16 @@ function bombExplodeRight (sprite: Sprite, depth: number) {
         }
     }
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.MoreBombs, function (sprite, otherSprite) {
+    otherSprite.destroy(effects.ashes, 500)
+    otherSprite.setFlag(SpriteFlag.Ghost, true)
+    bombNumbers += 1
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.ExplosionControl, function (sprite, otherSprite) {
+    otherSprite.destroy(effects.ashes, 500)
+    otherSprite.setFlag(SpriteFlag.Ghost, true)
+    explosionUnderControl = true
+})
 // handling left side explosion
 function bombExplodeBottom (sprite: Sprite, depth: number) {
     if (sprite.tileKindAt(TileDirection.Bottom, assets.tile`brickWall`)) {
@@ -407,7 +562,7 @@ function bombExplodeBottom (sprite: Sprite, depth: number) {
             }
         }
         if (explosionRange < 5) {
-            if (Math.percentChance(50)) {
+            if (Math.percentChance(30)) {
                 explosionRangeUpSprite = sprites.create(img`
                     . . . . . . . . . . . . . . . . 
                     . a d d d d d d d d d d d d a . 
@@ -427,6 +582,50 @@ function bombExplodeBottom (sprite: Sprite, depth: number) {
                     . . . . . . . . . . . . . . . . 
                     `, SpriteKind.ExplosionRangeUp)
                 tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Bottom))
+            } else {
+                if (Math.percentChance(30) && !(explosionUnderControl)) {
+                    explosionRangeUpSprite = sprites.create(img`
+                        . . . . . . . . . . . . . . . . 
+                        . a d d d d d d d d d d d d a . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a b d d d d d d d a a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d b b b d c a d . 
+                        . d a a d d d d d d d d c a d . 
+                        . d a a a c c c c c c c c a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . d a a a a a a a a a a a a d . 
+                        . a d d d d d d d d d d d d a . 
+                        . . . . . . . . . . . . . . . . 
+                        `, SpriteKind.ExplosionControl)
+                    tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Bottom))
+                } else {
+                    if (Math.percentChance(30)) {
+                        explosionRangeUpSprite = sprites.create(img`
+                            . . . . . . . . . . . . . . . . 
+                            . a d d d d d d d d d d d d a . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a 5 a a a a d . 
+                            . d a a a a f f 2 a a a a a d . 
+                            . d a a a f f 2 f f a a a a d . 
+                            . d a a f f f 2 1 f f a a a d . 
+                            . d a a f f f e f 1 f c a a d . 
+                            . d a a f d f f f f f c a a d . 
+                            . d a a a f d f f f c c a a d . 
+                            . d a a a a f f f c c a a a d . 
+                            . d a a a a a c c c a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . d a a a a a a a a a a a a d . 
+                            . a d d d d d d d d d d d d a . 
+                            . . . . . . . . . . . . . . . . 
+                            `, SpriteKind.MoreBombs)
+                        tiles.placeOnTile(explosionRangeUpSprite, tiles.locationInDirection(tiles.locationOfSprite(sprite), CollisionDirection.Bottom))
+                    }
+                }
             }
         }
     } else {
@@ -486,10 +685,14 @@ let explosionSprite: Sprite = null
 let bombSprite: Sprite = null
 let enemySprite: Sprite = null
 let bombermanSprite: Sprite = null
+let bombNumbers = 0
 let explosionRange = 0
+let explosionUnderControl = false
 let doorFound = false
 doorFound = false
+explosionUnderControl = false
 explosionRange = 1
+bombNumbers = 1
 scene.setBackgroundColor(7)
 tiles.setTilemap(tilemap`level`)
 bombermanSprite = sprites.create(img`
